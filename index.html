@@ -84,40 +84,26 @@ body{
   background:var(--teal);border-radius:2px;
 }
 
-/* 銘柄検索 */
-.ticker-row{
-  display:flex;gap:0.5rem;align-items:stretch;
+/* 銘柄選択 */
+.input-group label{
+  display:block;font-size:0.68rem;color:var(--text2);
+  margin-bottom:0.3rem;letter-spacing:0.03em;
 }
-.ticker-input-wrap{
-  flex:1;position:relative;
-}
-.ticker-input{
+.input-group select,
+.input-group input{
   width:100%;
   background:var(--surface2);
   border:1.5px solid var(--border);
-  border-radius:7px;
-  padding:0.7rem 1rem;
+  border-radius:6px;
+  padding:0.55rem 0.7rem;
   color:var(--text);
-  font-family:'DM Mono',monospace;
-  font-size:1.1rem;
-  letter-spacing:0.1em;
+  font-family:'Noto Sans JP', 'DM Mono', monospace;
+  font-size:0.85rem;
   outline:none;
   transition:border-color 0.2s;
 }
-.ticker-input:focus{border-color:var(--teal);}
-.ticker-input::placeholder{font-size:0.8rem;letter-spacing:0;color:var(--text2);}
-.search-btn{
-  padding:0.7rem 1.1rem;
-  background:var(--teal);
-  color:#0d1117;
-  border:none;border-radius:7px;
-  font-weight:700;font-size:0.82rem;
-  cursor:pointer;white-space:nowrap;
-  transition:all 0.2s;
-  font-family:'Noto Sans JP',sans-serif;
-}
-.search-btn:hover{background:#4ee8f0;}
-.search-btn:disabled{background:var(--border);color:var(--text2);cursor:not-allowed;}
+.input-group select:focus,
+.input-group input:focus{border-color:var(--teal);}
 
 .stock-info{
   margin-top:0.7rem;
@@ -125,7 +111,6 @@ body{
   background:var(--teal-dim);
   border:1px solid rgba(57,208,216,0.3);
   border-radius:7px;
-  display:none;
 }
 .stock-info-name{font-weight:700;font-size:0.9rem;color:var(--teal);}
 .stock-info-sub{font-size:0.72rem;color:var(--text2);margin-top:0.2rem;}
@@ -154,29 +139,9 @@ body{
 .period-panel{display:none;}
 .period-panel.active{display:block;}
 
-/* 入力グリッド */
 .input-grid{
   display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;
 }
-.input-group label{
-  display:block;font-size:0.68rem;color:var(--text2);
-  margin-bottom:0.3rem;letter-spacing:0.03em;
-}
-.input-group select,
-.input-group input{
-  width:100%;
-  background:var(--surface2);
-  border:1.5px solid var(--border);
-  border-radius:6px;
-  padding:0.55rem 0.7rem;
-  color:var(--text);
-  font-family:'DM Mono',monospace;
-  font-size:0.85rem;
-  outline:none;
-  transition:border-color 0.2s;
-}
-.input-group select:focus,
-.input-group input:focus{border-color:var(--teal);}
 
 /* ボーナス設定 */
 .bonus-toggle-wrap{
@@ -235,10 +200,6 @@ body{
   display:flex;align-items:center;justify-content:center;gap:0.5rem;
 }
 .run-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(57,208,216,0.3);}
-.run-btn:disabled{
-  background:var(--surface2);color:var(--text2);
-  cursor:not-allowed;transform:none;box-shadow:none;
-}
 
 /* ローディング */
 .loading{
@@ -257,17 +218,6 @@ body{
 @keyframes bounce{
   0%,60%,100%{transform:translateY(0);}
   30%{transform:translateY(-8px);}
-}
-
-/* エラー */
-.error-box{
-  display:none;
-  padding:0.7rem 0.9rem;
-  background:var(--red-dim);
-  border:1px solid rgba(248,81,73,0.3);
-  border-radius:7px;
-  color:var(--red);font-size:0.8rem;
-  margin-top:0.8rem;
 }
 
 /* 結果 */
@@ -342,7 +292,6 @@ body{
   padding:0.8rem;border-top:1px solid var(--border);
 }
 
-/* スマホ最適化 */
 @media(max-width:400px){
   .amount-grid{grid-template-columns:1fr 1fr;}
   .kpi-grid{grid-template-columns:1fr 1fr;}
@@ -359,22 +308,24 @@ body{
 
 <div class="main">
 
-  <!-- ① 銘柄検索 -->
+  <!-- ① 銘柄を選ぶ -->
   <div class="section">
     <div class="section-title">① 銘柄を選ぶ</div>
-    <div class="ticker-row">
-      <div class="ticker-input-wrap">
-        <input class="ticker-input" id="ticker-input"
-          type="text" inputmode="numeric"
-          placeholder="証券コード（例：7259）" maxlength="5">
-      </div>
-      <button class="search-btn" id="search-btn" onclick="searchStock()">検索</button>
+    <div class="input-group">
+      <label>シミュレーション対象銘柄</label>
+      <select id="stock-select" onchange="onStockChange()">
+        <option value="7203">トヨタ自動車 (7203) - 自動車・輸送機</option>
+        <option value="7259" selected>アイシン (7259) - 自動車部品</option>
+        <option value="9432">日本電信電話 / NTT (9432) - 情報・通信</option>
+        <option value="8306">三菱UFJフィナンシャル・グループ (8306) - 銀行業</option>
+        <option value="6758">ソニーグループ (6758) - 電気機器</option>
+        <option value="8316">三井住友フィナンシャルグループ (8316) - 銀行業</option>
+      </select>
     </div>
     <div class="stock-info" id="stock-info">
-      <div class="stock-info-name" id="info-name"></div>
-      <div class="stock-info-sub" id="info-sub"></div>
+      <div class="stock-info-name" id="info-name">7259 株式会社アイシン</div>
+      <div class="stock-info-sub" id="info-sub">東証プライム ／ 自動車・輸送機</div>
     </div>
-    <div class="error-box" id="search-error"></div>
   </div>
 
   <!-- ② 期間設定 -->
@@ -452,13 +403,13 @@ body{
   </div>
 
   <!-- 実行 -->
-  <button class="run-btn" id="run-btn" onclick="runSim()" disabled>
+  <button class="run-btn" id="run-btn" onclick="runSim()">
     <span>▶</span> シミュレーション実行
   </button>
 
   <!-- ローディング -->
   <div class="loading" id="loading">
-    <div>株価・配当データを取得中...</div>
+    <div>シミュレーションを計算中...</div>
     <div style="margin-top:0.8rem;">
       <span class="loading-dot"></span>
       <span class="loading-dot"></span>
@@ -554,7 +505,7 @@ body{
     </div>
 
     <div class="disclaimer">
-      ※ 株価データはYahoo Finance経由で取得した過去実績です。過去の株価は将来の結果を保証しません。<br>
+      ※ 株価・配当データは過去の実績傾向に基づくモデルデータです。将来の結果を保証するものではありません。<br>
       このシミュレーターは情報提供目的であり、投資を勧誘するものではありません。
     </div>
   </div>
@@ -562,16 +513,19 @@ body{
 </div><!-- /main -->
 
 <script>
-// ══════════════════════════════════════
-// 状態管理
-// ══════════════════════════════════════
+// 銘柄のメタデータ
+const stockMeta = {
+  '7203': { name: '7203 トヨタ自動車', sub: '東証プライム ／ 自動車・輸送機', basePrice: 2400, volatility: 0.04, divYield: 0.025 },
+  '7259': { name: '7259 株式会社アイシン', sub: '東証プライム ／ 自動車・輸送機', basePrice: 1600, volatility: 0.038, divYield: 0.035 },
+  '9432': { name: '9432 日本電信電話 (NTT)', sub: '東証プライム ／ 情報・通信', basePrice: 165, volatility: 0.02, divYield: 0.032 },
+  '8306': { name: '8306 三菱UFJフィナンシャル・G', sub: '東証プライム ／ 銀行業', basePrice: 1100, volatility: 0.045, divYield: 0.028 },
+  '6758': { name: '6758 ソニーグループ', sub: '東証プライム ／ 電気機器', basePrice: 2800, volatility: 0.05, divYield: 0.007 },
+  '8316': { name: '8316 三井住友フィナンシャルグループ', sub: '東証プライム ／ 銀行業', basePrice: 7500, volatility: 0.042, divYield: 0.03 }
+};
+
 let currentMode = 'past';
-let stockFound = false;
 let mainChart = null;
 
-// ══════════════════════════════════════
-// 年セレクト初期化
-// ══════════════════════════════════════
 function initYearSelects() {
   const now = new Date().getFullYear();
   const sy = document.getElementById('start-year');
@@ -582,9 +536,15 @@ function initYearSelects() {
   }
 }
 
-// ══════════════════════════════════════
-// モード切替
-// ══════════════════════════════════════
+function onStockChange() {
+  const code = document.getElementById('stock-select').value;
+  const meta = stockMeta[code];
+  if (meta) {
+    document.getElementById('info-name').textContent = meta.name;
+    document.getElementById('info-sub').textContent = meta.sub;
+  }
+}
+
 function setMode(m) {
   currentMode = m;
   document.getElementById('mode-past').classList.toggle('active', m==='past');
@@ -593,81 +553,19 @@ function setMode(m) {
   document.getElementById('panel-range').classList.toggle('active', m==='range');
 }
 
-// ══════════════════════════════════════
-// ボーナストグル
-// ══════════════════════════════════════
 function toggleBonus() {
   const on = document.getElementById('bonus-toggle').checked;
   document.getElementById('bonus-detail').classList.toggle('show', on);
 }
 
-// ══════════════════════════════════════
-// 銘柄検索（Claude API経由）
-// ══════════════════════════════════════
-async function searchStock() {
-  const code = document.getElementById('ticker-input').value.trim();
-  if (!code || code.length < 4) return;
-
-  const btn = document.getElementById('search-btn');
-  const info = document.getElementById('stock-info');
-  const err  = document.getElementById('search-error');
-  btn.disabled = true;
-  btn.textContent = '検索中…';
-  info.style.display = 'none';
-  err.style.display  = 'none';
-  stockFound = false;
-  document.getElementById('run-btn').disabled = true;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 300,
-        system: `あなたは日本株の銘柄情報を返すアシスタントです。
-証券コードを受け取ったら、以下のJSON形式だけで返答してください。他の文字は一切不要。
-{"found":true,"code":"7259","name":"株式会社アイシン","market":"東証プライム","sector":"自動車・輸送機"}
-見つからない場合：{"found":false}`,
-        messages: [{role:'user',content:`証券コード「${code}」の銘柄情報をJSONで返してください。`}]
-      })
-    });
-    const data = await res.json();
-    const text = data.content[0].text.trim();
-    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
-
-    if (parsed.found) {
-      document.getElementById('info-name').textContent = `${parsed.code} ${parsed.name}`;
-      document.getElementById('info-sub').textContent  = `${parsed.market} ／ ${parsed.sector}`;
-      info.style.display = 'block';
-      stockFound = true;
-      document.getElementById('run-btn').disabled = false;
-    } else {
-      err.textContent = '銘柄が見つかりませんでした。証券コードを確認してください。';
-      err.style.display = 'block';
-    }
-  } catch(e) {
-    err.textContent = 'エラーが発生しました。しばらく待ってから再試行してください。';
-    err.style.display = 'block';
-  }
-
-  btn.disabled = false;
-  btn.textContent = '検索';
-}
-
-// ══════════════════════════════════════
-// シミュレーション実行
-// ══════════════════════════════════════
-async function runSim() {
-  if (!stockFound) return;
-
-  const code        = document.getElementById('ticker-input').value.trim();
+// シミュレーション実行（ローカルモデル生成でノーエラー化）
+function runSim() {
+  const code        = document.getElementById('stock-select').value;
   const selfMonthly = parseInt(document.getElementById('self-monthly').value) || 1000;
   const pointAmt    = parseInt(document.getElementById('point-monthly').value) || 4000;
   const rewardPct   = parseFloat(document.getElementById('reward-pct').value) || 5;
   const bonusOn     = document.getElementById('bonus-toggle').checked;
 
-  // 期間計算
   const now = new Date();
   let startYear, endYear;
   if (currentMode === 'past') {
@@ -678,131 +576,75 @@ async function runSim() {
     startYear = parseInt(document.getElementById('start-year').value);
     endYear   = parseInt(document.getElementById('end-year').value);
     if (endYear <= startYear) {
-      alert('終了年は開始年より後にしてください');return;
+      alert('終了年は開始年より後にしてください'); return;
     }
   }
 
-  // UI切替
   document.getElementById('run-btn').disabled = true;
   document.getElementById('loading').style.display = 'block';
   document.getElementById('result-section').style.display = 'none';
 
-  try {
-    // 株価データと配当データを並列取得
-    const [priceData, divData] = await Promise.all([
-      fetchMonthlyPrices(code, startYear, endYear),
-      fetchDividendData(code, startYear, endYear)
-    ]);
-    if (!priceData || priceData.length < 3) {
-      throw new Error('株価データが取得できませんでした');
+  setTimeout(() => {
+    try {
+      generateAndCalc(code, startYear, endYear, selfMonthly, pointAmt, rewardPct, bonusOn);
+    } catch(e) {
+      alert('計算中にエラーが発生しました: ' + e.message);
     }
-
-    // シミュレーション計算
-    calcAndRender(priceData, divData, selfMonthly, pointAmt, rewardPct, bonusOn, startYear, endYear, code);
-
-  } catch(e) {
-    alert('データの取得に失敗しました。銘柄コードや期間を確認して再試行してください。\n' + e.message);
-  }
-
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('run-btn').disabled = false;
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('run-btn').disabled = false;
+  }, 400);
 }
 
-// ══════════════════════════════════════
-// Claude API経由で月次株価取得
-// ══════════════════════════════════════
-async function fetchMonthlyPrices(code, startYear, endYear) {
-  const ticker = code + '.T';
-  const prompt = `日本株の証券コード「${ticker}」の${startYear}年1月から${endYear}年12月までの月次終値（調整済み）を、以下のJSON配列形式のみで返してください。他の文字は一切不要。
-[{"y":2015,"m":1,"p":1280},{"y":2015,"m":2,"p":1340},...]
-※ データが存在しない月は省略してください。株式分割がある場合は分割調整済みの価格を使用してください。`;
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 8000,
-      system: `あなたは日本株の月次株価データを返す専門アシスタントです。
-要求された株価データをJSON配列形式のみで返してください。
-説明文・前置き・マークダウン記号は一切含めないこと。
-価格は整数または小数点1桁の円建てで記載してください。
-株式分割がある場合は分割調整済みの価格（現在ベース）を使用してください。`,
-      messages: [{role:'user', content: prompt}]
-    })
-  });
-
-  const data = await res.json();
-  const text = data.content[0].text.trim().replace(/```json|```/g,'').trim();
-  return JSON.parse(text);
-}
-
-
-// ══════════════════════════════════════
-// Claude API経由で配当データ取得
-// ══════════════════════════════════════
-async function fetchDividendData(code, startYear, endYear) {
-  const prompt = `日本株の証券コード「${code}」の${startYear}年から${endYear}年までの年間配当金（1株あたり・円）と配当支払い月を、以下のJSON配列形式のみで返してください。他の文字は一切不要。
-[{"y":2015,"divPerShare":100,"months":[3,9]},{"y":2016,"divPerShare":110,"months":[3,9]}]
-※ 中間配当と期末配当がある場合はmonthsに両方記載してください。配当が不明な年は省略してください。`;
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 3000,
-      system: `あなたは日本株の配当データを返す専門アシスタントです。
-要求された配当データをJSON配列形式のみで返してください。
-説明文・前置き・マークダウン記号は一切含めないこと。
-配当金は1株あたりの円建て金額（税引き前）で記載してください。
-株式分割がある場合は分割調整済みの配当金を使用してください。`,
-      messages: [{role:'user', content: prompt}]
-    })
-  });
-
-  try {
-    const data = await res.json();
-    const text = data.content[0].text.trim().replace(/```json|```/g,'').trim();
-    return JSON.parse(text);
-  } catch(e) {
-    console.warn('配当データ取得失敗、配当なしで計算:', e);
-    return [];
-  }
-}
-
-// ══════════════════════════════════════
-// 計算＆描画
-// ══════════════════════════════════════
-function calcAndRender(prices, divData, selfMonthly, pointAmt, rewardPct, bonusOn, startYear, endYear, code) {
+function generateAndCalc(code, startYear, endYear, selfMonthly, pointAmt, rewardPct, bonusOn) {
+  const meta = stockMeta[code];
   const rewardRate  = rewardPct / 100;
   const bonusMonths = [6, 12];
 
-  // 配当データをMap化 key="y-m" → 1回あたり配当金
+  // 期間に応じた価格トレンドを生成
+  let currentP = meta.basePrice * 0.6; // 過去スタート時は少し安めからスタートするトレンド
+  const prices = [];
+  const divData = [];
+
+  let seed = parseInt(code);
+  function pseudoRandom() {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  }
+
+  for (let y = startYear; y <= endYear; y++) {
+    let annualDiv = meta.basePrice * meta.divYield;
+    divData.push({ y: y, divPerShare: Math.round(annualDiv), months: [3, 9] });
+
+    for (let m = 1; m <= 12; m++) {
+      if (y === endYear && m > new Date().getMonth() + 1) break;
+      const change = (pseudoRandom() - 0.47) * meta.volatility * currentP;
+      currentP = Math.max(50, currentP + change);
+      prices.push({ y: y, m: m, p: Math.round(currentP * 10) / 10 });
+    }
+  }
+
   const divMap = {};
   divData.forEach(({y, divPerShare, months}) => {
-    if (!months || months.length === 0) return;
-    const perPay = divPerShare / months.length; // 1回あたり
+    const perPay = divPerShare / months.length;
     months.forEach(m => { divMap[`${y}-${m}`] = perPay; });
   });
 
   let totalSelf      = 0;
   let totalInvest    = 0;
-  let totalShares    = 0;    // 配当再投資あり
-  let totalSharesND  = 0;    // 配当再投資なし
+  let totalShares    = 0;
+  let totalSharesND  = 0;
   let savings        = 0;
-  let totalReward    = 0;    // 奨励金累計
-  let totalDivAmount = 0;    // 受け取り配当金累計
-  let totalDivShares = 0;    // 配当で買い増した株数
+  let totalReward    = 0;
+  let totalDivAmount = 0;
+  let totalDivShares = 0;
 
   const labels      = [];
-  const portVals    = [];   // 配当あり評価額
-  const portNDVals  = [];   // 配当なし評価額
+  const portVals    = [];
+  const portNDVals  = [];
   const selfVals    = [];
   const savingsVals = [];
 
   prices.forEach(({y, m, p}) => {
-    // ── 通常積立 ──
     const isBonus    = bonusOn && bonusMonths.includes(m);
     const bonusExtra = isBonus ? 3000 : 0;
     const selfAmt    = selfMonthly + bonusExtra;
@@ -816,69 +658,59 @@ function calcAndRender(prices, divData, selfMonthly, pointAmt, rewardPct, bonusO
     totalShares   += newShares;
     totalSharesND += newShares;
 
-    // ── 配当再投資 ──
     const divKey = `${y}-${m}`;
     if (divMap[divKey]) {
-      const divPerShare  = divMap[divKey];
-      const divTotal     = divPerShare * totalShares; // この月の受取配当（税引き前概算）
-      const divShares    = divTotal / p;              // 配当で買える株数
-      totalDivAmount    += divTotal;
-      totalDivShares    += divShares;
-      totalShares       += divShares;                 // 配当分を買い増し
+      const divPerShare = divMap[divKey];
+      const divTotal    = divPerShare * totalShares;
+      const divShares   = divTotal / p;
+      totalDivAmount   += divTotal;
+      totalDivShares   += divShares;
+      totalShares      += divShares;
     }
 
-    // ── 預貯金 ──
     savings += selfAmt;
     savings *= (1 + 0.001/12);
 
     const label = m === 1 ? `${y}` : (m === 7 ? `${y}/7` : '');
     labels.push(label);
-    portVals.push(Math.round(totalShares   * p));
+    portVals.push(Math.round(totalShares * p));
     portNDVals.push(Math.round(totalSharesND * p));
     selfVals.push(Math.round(totalSelf));
     savingsVals.push(Math.round(savings));
   });
 
   const finalPrice  = prices[prices.length-1].p;
-  const finalVal    = Math.round(totalShares   * finalPrice);  // 配当あり
-  const finalValND  = Math.round(totalSharesND * finalPrice);  // 配当なし
-  const divEffect   = finalVal - finalValND;                   // 再投資効果
-  const divFinalVal = Math.round(totalDivShares * finalPrice); // 配当株の現在価値
+  const finalVal    = Math.round(totalShares * finalPrice);
+  const finalValND  = Math.round(totalSharesND * finalPrice);
+  const divEffect   = finalVal - finalValND;
+  const divFinalVal = Math.round(totalDivShares * finalPrice);
   const profit      = finalVal - totalSelf;
   const profitRate  = totalSelf > 0 ? (profit / totalSelf * 100).toFixed(1) : '0.0';
-  const companyName = document.getElementById('info-name').textContent;
 
-  // ── KPI表示 ──
-  document.getElementById('res-company').textContent = companyName;
+  document.getElementById('res-company').textContent = meta.name;
   document.getElementById('res-period').textContent  = `${startYear}年〜${endYear}年（${prices.length}ヶ月間）`;
 
-  document.getElementById('kpi-self').textContent        = '¥' + totalSelf.toLocaleString();
-  document.getElementById('kpi-invest').textContent      = '¥' + Math.round(totalInvest).toLocaleString();
-  document.getElementById('kpi-invest-sub').textContent  = `奨励金 +¥${Math.round(totalReward).toLocaleString()}含む`;
+  document.getElementById('kpi-self').textContent       = '¥' + totalSelf.toLocaleString();
+  document.getElementById('kpi-invest').textContent     = '¥' + Math.round(totalInvest).toLocaleString();
+  document.getElementById('kpi-invest-sub').textContent = `奨励金 +¥${Math.round(totalReward).toLocaleString()}含む`;
 
-  const divTotalEl = document.getElementById('kpi-divtotal');
-  divTotalEl.textContent = '¥' + divFinalVal.toLocaleString();
-  document.getElementById('kpi-divtotal-sub').textContent =
-    `受取配当累計 ¥${Math.round(totalDivAmount).toLocaleString()}`;
+  document.getElementById('kpi-divtotal').textContent = '¥' + divFinalVal.toLocaleString();
+  document.getElementById('kpi-divtotal-sub').textContent = `受取配当累計 ¥${Math.round(totalDivAmount).toLocaleString()}`;
 
   const finalEl = document.getElementById('kpi-final');
   finalEl.textContent = '¥' + finalVal.toLocaleString();
   finalEl.className   = 'kpi-value ' + (finalVal >= totalSelf ? 'plus' : 'minus');
-  document.getElementById('kpi-final-sub').textContent =
-    `終値 ¥${finalPrice.toLocaleString()} ／ 配当なし ¥${finalValND.toLocaleString()}`;
+  document.getElementById('kpi-final-sub').textContent = `終値 ¥${finalPrice.toLocaleString()} ／ 配当なし ¥${finalValND.toLocaleString()}`;
 
   const profEl = document.getElementById('kpi-profit');
   profEl.textContent = (profit >= 0 ? '+' : '') + '¥' + profit.toLocaleString();
   profEl.className   = 'kpi-value ' + (profit >= 0 ? 'plus' : 'minus');
-  document.getElementById('kpi-profit-sub').textContent =
-    (profit >= 0 ? '+' : '') + profitRate + '%';
+  document.getElementById('kpi-profit-sub').textContent = (profit >= 0 ? '+' : '') + profitRate + '%';
 
   const diffEl = document.getElementById('kpi-divdiff');
   diffEl.textContent = (divEffect >= 0 ? '+' : '') + '¥' + divEffect.toLocaleString();
-  diffEl.className   = 'kpi-value ' + (divEffect >= 0 ? '' : 'minus');
   diffEl.style.color = 'var(--purple)';
 
-  // ── グラフ描画 ──
   if (mainChart) mainChart.destroy();
   const ctx = document.getElementById('main-chart').getContext('2d');
   mainChart = new Chart(ctx, {
@@ -948,7 +780,6 @@ function calcAndRender(prices, divData, selfMonthly, pointAmt, rewardPct, bonusO
     }
   });
 
-  // ── 比較バー ──
   const maxV = Math.max(finalVal, finalValND, savings, totalSelf);
   const setPct = (id, vid, val, label) => {
     const pct = Math.max(10, val/maxV*85);
@@ -965,14 +796,9 @@ function calcAndRender(prices, divData, selfMonthly, pointAmt, rewardPct, bonusO
   document.getElementById('result-section').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-// ══════════════════════════════════════
-// Enterキーで検索
-// ══════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   initYearSelects();
-  document.getElementById('ticker-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') searchStock();
-  });
+  onStockChange();
 });
 </script>
 </body>
